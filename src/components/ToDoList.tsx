@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useRecoilValue} from "recoil";
-import { toDoState } from "../atoms";
+import { toDoSelector, toDoState } from "../atoms";
 import CreateToDo from './CreateToDo';
 import ToDo from './ToDo';
 const Container = styled.div`
@@ -13,14 +13,28 @@ const Container = styled.div`
 
 
 function ToDoList(){
-    const toDos= useRecoilValue(toDoState);
+    //const toDos= useRecoilValue(toDoState);
+    const [toDo,doing,done] = useRecoilValue(toDoSelector);
+    //console.log(selectorOutput);
 
     return(
         <Container>
             <h1>To Dos</h1>
             <CreateToDo/>
+            <h2>To Do</h2>
+            <hr />
             <ul>
-                {toDos.map(toDo =><ToDo key={toDo.id}{...toDo}/> )}
+                {toDo.map(toDo =><ToDo key={toDo.id}{...toDo}/> )}
+            </ul>
+            <h2>Doing</h2>
+            <hr/>
+            <ul>
+                {doing.map(toDo =><ToDo key={toDo.id}{...toDo}/> )}
+            </ul>
+            <h2>Done</h2>
+            <hr/> 
+            <ul>
+                {done.map(toDo =><ToDo key={toDo.id}{...toDo}/> )}
             </ul>
         </Container>
     )
