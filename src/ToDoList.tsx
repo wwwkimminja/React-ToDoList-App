@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {useForm} from 'react-hook-form';
 import styled from 'styled-components';
 
@@ -12,9 +12,12 @@ height:300px;
     
     input {
         width: 80%;
-        margin-bottom: 5px;
+        margin: 5px 0;
     }
-
+    span{
+        color:red;
+        font-size: 0.5rem;
+    }
 `;
 
 
@@ -41,24 +44,47 @@ function ToDoList(){
   )
 }
  */
+
+interface IForm {
+    email: string;
+    firtstName: string;
+    lastName: string;
+    username: string;
+    password: string;
+    password1: string;
+}
 function ToDoList(){
-    const {register, handleSubmit, formState }=useForm();
-    const onValid = (data:any) => {
+    const {register, handleSubmit, formState:{errors} }=useForm<IForm>({
+        defaultValues:{
+            email:"@gmail.com",
+        },
+
+    });
+    const onValid = (data:IForm) => {
         console.log(data);
 
     };
-   console.log(formState.errors);
+   console.log(errors);
 
 
     return(
         <div>
             <Form onSubmit={handleSubmit(onValid)}>
-                <input {...register("email",{required:true})} placeholder="Email"/>
-                <input {...register("firtstName",{required:true , minLength:{value:10,message:"Your name is too Shot"} })} placeholder="First Name"/>
-                <input {...register("lastName",{required:true})} placeholder="Last Name"/>
-                <input {...register("username",{required:true})} placeholder="User Name"/>
-                <input {...register("password",{required:true})} placeholder="Password"/>
-                <input {...register("password1",{required:"password is required"})} placeholder="Passward1"/>
+                <input {...register("email",
+                {required:"Email Required",
+                pattern:{value:/^[A-Za-z0-9._%+-]+@gmail.com$/,
+                message:"Only gmail.com emails allowed"},})} placeholder="Email"/>
+                <span>{errors?.email?.message}</span>
+                <input {...register("firtstName",{required:"first name is required" , minLength:{value:10,message:"Your name is too Shot"} })} placeholder="First Name"/>
+                <span>{errors?.firtstName?.message}</span>
+                <input {...register("lastName",{required:"last name is required"})} placeholder="Last Name"/>
+                <span>{errors?.lastName?.message}</span>
+                <input {...register("username",{required:"username is required"})} placeholder="User Name"/>
+                <span>{errors?.username?.message}</span>
+                <input {...register("password",{required:"password is required"})} placeholder="Password"/>
+                <span>{errors?.password?.message}</span>
+                <input {...register("password1",{required:"password1 is required"})} placeholder="Passward1"/>
+                <span>{errors?.password1?.message}</span>
                 <button>Add</button>
             </Form>
         </div>
