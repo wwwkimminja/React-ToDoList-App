@@ -7,14 +7,24 @@ width: 80%;
 height:300px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+   
     margin:10px;
+    padding :0;
+
     
-    input {
-        width: 80%;
-        margin: 5px 0;
+    input{
+    
+       width: 90%;
+       margin-top: 5px;
+    }
+    button {
+        width:93%;
+        margin-top: 15px;
     }
     span{
+        margin-left: 10px;
+        align-self: flex-start;
         color:red;
         font-size: 0.5rem;
     }
@@ -52,32 +62,38 @@ interface IForm {
     username: string;
     password: string;
     password1: string;
+    extraError?:string;
 }
 function ToDoList(){
-    const {register, handleSubmit, formState:{errors} }=useForm<IForm>({
+    const {register, handleSubmit, formState:{errors} ,setError}=useForm<IForm>({
         defaultValues:{
             email:"@gmail.com",
         },
 
     });
     const onValid = (data:IForm) => {
-        console.log(data);
+        if(data.password !== data.password1){
+            setError("password1",{message:"Password are not the same!!"},{shouldFocus:true})
+        }
+        setError("extraError",{message:"Server offline"});
 
-    };
-   console.log(errors);
-
-
+    }    
     return(
         <div>
             <Form onSubmit={handleSubmit(onValid)}>
                 <input {...register("email",
                 {required:"Email Required",
+              
                 pattern:{value:/^[A-Za-z0-9._%+-]+@gmail.com$/,
                 message:"Only gmail.com emails allowed"},})} placeholder="Email"/>
                 <span>{errors?.email?.message}</span>
                 <input {...register("firtstName",{required:"first name is required" , minLength:{value:10,message:"Your name is too Shot"} })} placeholder="First Name"/>
                 <span>{errors?.firtstName?.message}</span>
-                <input {...register("lastName",{required:"last name is required"})} placeholder="Last Name"/>
+                <input {...register("lastName",{
+                    required:"last name is required",
+                    validate:{
+                        noNico:(value) => value.includes("nico")? "no nico allowed ":true,
+                        noNick:(value) => value.includes('nick')?"no nick allowed":true,}})} placeholder="Last Name"/>
                 <span>{errors?.lastName?.message}</span>
                 <input {...register("username",{required:"username is required"})} placeholder="User Name"/>
                 <span>{errors?.username?.message}</span>
@@ -86,8 +102,10 @@ function ToDoList(){
                 <input {...register("password1",{required:"password1 is required"})} placeholder="Passward1"/>
                 <span>{errors?.password1?.message}</span>
                 <button>Add</button>
+                <span>{errors?.extraError?.message}</span>
             </Form>
         </div>
     )
 }
+
 export default ToDoList;
